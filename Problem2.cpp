@@ -1,46 +1,106 @@
 #include <iostream>
 using namespace std;
-
-struct Node {
+class Node{
+    public:
     int data;
     Node* next;
 };
 
-Node* createNode(int data) {
-    Node* newNode = new Node();
-    newNode->data = data;
-    newNode->next = nullptr;
-    return newNode;
-}
-
-void insertSorted(Node*& head, int data) {
-    Node* newNode = createNode(data);
-    if (head == nullptr || head->data >= data) {
-        newNode->next = head;
-        head = newNode;
-        return;
+class SortedLinkedList{
+  Node* head;
+  public:
+    SortedLinkedList(){
+        head = NULL;
+    }
+    void insert(int data){
+        Node* newNode = new Node();
+        newNode->data = data;
+        newNode->next = NULL;
+        if(head == NULL){
+            head = newNode;
+        }
+        else{
+            Node* temp = head;
+            Node* prev = NULL;
+            while(temp != NULL && temp->data < data){
+                prev = temp;
+                temp = temp->next;
+            }
+            if(prev == NULL){
+                newNode->next = head;
+                head = newNode;
+            }else{
+                prev->next = newNode;
+                newNode->next = temp;
+            }
+        }
     }
 
-    Node* current = head;
-    while (current->next != nullptr && current->next->data < data) {
-        current = current->next;
+    void remove(int index) {
+        if (head == NULL) {
+            cout << "Error: List is empty." << endl;
+            return;
+        }
+    
+        Node* temp = head;
+        int count = 0;
+    
+       
+        while (temp != NULL) {
+            count++;
+            temp = temp->next;
+        }
+    
+        if (index < 0 || index >= count) {
+            cout << "Error: Index out of bounds." << endl;
+            return;
+        }
+    
+        if (index == 0) {
+            temp = head;
+            head = head->next;
+            delete temp;
+        } else {
+            temp = head;
+            Node* prev = NULL;
+            for (int i = 0; i < index; i++) {
+                prev = temp;
+                temp = temp->next;
+            }
+            prev->next = temp->next;
+            delete temp;
+        }
     }
 
-    newNode->next = current->next;
-    current->next = newNode;
-}
+    friend ostream& operator<<(ostream& out, const SortedLinkedList& list) {
+        Node* temp = list.head;
+        while(temp != NULL){
+            out << temp->data << " ";
+            temp = temp->next;
+        }
+        return out;
+    }
 
-// void printList(Node* head) {
-//     Node* current = head;
-//     while (current != nullptr) {
-//         cout << current->data << " -> ";
-//         current = current->next;
-//     }
-//     cout << "nullptr" << endl;
-// }
+    int operator[](int index) const {
+        Node* temp = head;
+        for(int i = 0; i < index; i++){
+            temp = temp->next;
+        }
+        return temp->data;
+    }
+};
 
 int main() {
-    
-
+    SortedLinkedList list;
+    list.insert(5);
+    list.insert(3);
+    list.insert(7);
+    list.insert(1);
+    list.insert(9);
+    list.insert(1);
+    cout << list << endl;
+    list.remove(3);
+    list.remove(12);
+    cout << list << endl;
     return 0;
 }
