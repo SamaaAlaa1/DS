@@ -1,8 +1,5 @@
-#include"StatisticalCalculation.h"
-#include"StatisticalCalculation.cpp"
+#include"SortingSystem.h"
 int main() {
-    StatisticalCalculation<int> arr;
-    arr.statisticsMenu();
 
     return 0;
 }
