@@ -1,85 +1,118 @@
 #include "SortingSystem.h"
 
 template <typename T>
-SortingSystem<T>::SortingSystem(int n) {
-    cout << "Enter the number of items to sort: ";
-  cin >> n;
+SortingSystem<T>::SortingSystem(int n)
+{
   size = n;
   data = new T[size];
-  for (int i = 0; i < size; i++) {
+
+  cin.ignore();
+
+  for (int i = 0; i < size; i++)
+  {
     cout << "Enter data " << i + 1 << ": ";
-    cin >> data[i];
+
+    if constexpr (std::is_same<T, std::string>::value)
+    {
+      getline(cin, data[i]);
+    }
+    else
+    {
+      cin >> data[i];
+    }
   }
 }
 
 template <typename T>
-SortingSystem<T>::~SortingSystem() {
-    delete[] data;
-    data = nullptr;
+SortingSystem<T>::~SortingSystem()
+{
+  delete[] data;
+  data = nullptr;
 }
 
 template <typename T>
-void SortingSystem<T>::insertionSort() {
-  displayData("Initial Data");
-  for (int i = 1; i < size; i++) {
+void SortingSystem<T>::insertionSort()
+{
+  cout << "Selection Sort\n";
+  displayData();
+  for (int i = 1; i < size; i++)
+  {
     T key = data[i];
     int j = i - 1;
-    while (j >= 0 && data[j] > key) {
+    while (j >= 0 && data[j] > key)
+    {
       data[j + 1] = data[j];
       j--;
     }
     data[j + 1] = key;
-    displayData("Iteration " + to_string(i));
+    displayData();
   }
+  cout << "Sorted Data: ";
+  displayData();
+  cout << endl;
 }
 
 template <typename T>
-void SortingSystem<T>::bubbleSort() {
-  displayData("Initial Data");
-  for (int i = 0; i < size - 1; i++) {
-    for (int j = 0; j < size - i - 1; j++) {
-      if (data[j] > data[j + 1]){
+void SortingSystem<T>::bubbleSort()
+{
+  displayData();
+  for (int i = 0; i < size - 1; i++)
+  {
+    for (int j = 0; j < size - i - 1; j++)
+    {
+      if (data[j] > data[j + 1])
+      {
         swap(data[j], data[j + 1]);
       }
     }
-    displayData("Iteration " + to_string(i + 1));
+    displayData();
   }
 }
 
 template <typename T>
-void SortingSystem<T>::shellSort() {
-  displayData("Initial Data");
-  for (int gap = size / 2; gap > 0; gap /= 2) {
-    for (int i = gap; i < size; i++) {
+void SortingSystem<T>::shellSort()
+{
+  displayData();
+  for (int gap = size / 2; gap > 0; gap /= 2)
+  {
+    for (int i = gap; i < size; i++)
+    {
       T temp = data[i];
       int j;
-      for (j = i; j >= gap && data[j - gap] > temp; j -= gap) {
+      for (j = i; j >= gap && data[j - gap] > temp; j -= gap)
+      {
         data[j] = data[j - gap];
       }
       data[j] = temp;
     }
-    displayData("Iteration (gap=" + to_string(gap) + ")");
+    displayData();
   }
 }
 
 template <typename T>
-void SortingSystem<T>::selectionSort() {
-  displayData("Initial Data");
-  for (int i = 0; i < size - 1; i++) {
+void SortingSystem<T>::selectionSort()
+{
+  displayData();
+  for (int i = 0; i < size - 1; i++)
+  {
     int minIndex = i;
-    for (int j = i + 1; j < size; j++) {
-      if (data[j] < data[minIndex]){
+    for (int j = i + 1; j < size; j++)
+    {
+      if (data[j] < data[minIndex])
+      {
         minIndex = j;
       }
     }
     swap(data[i], data[minIndex]);
-    displayData("Iteration " + to_string(i + 1));
+    displayData();
   }
 }
 
 template <typename T>
-void SortingSystem<T>::mergeSort(int left, int right) {
-  if (left < right) {
+void SortingSystem<T>::mergeSort(int left, int right)
+{
+  if (left < right)
+  {
     int mid = left + (right - left) / 2;
     mergeSort(left, mid);
     mergeSort(mid + 1, right);
@@ -90,33 +123,43 @@ void SortingSystem<T>::mergeSort(int left, int right) {
 }
 
 template <typename T>
-void SortingSystem<T>::merge(int left, int mid, int right) {
+void SortingSystem<T>::merge(int left, int mid, int right)
+{
   int n1 = mid - left + 1;
   int n2 = right - mid;
   vector<T> LArr(n1), RArr(n2);
-  for (int i = 0; i < n1; i++) {
+  for (int i = 0; i < n1; i++)
+  {
     LArr[i] = data[left + i];
   }
-  for (int i = 0; i < n2; i++) {
+  for (int i = 0; i < n2; i++)
+  {
     RArr[i] = data[mid + 1 + i];
   }
 
   int i = 0, j = 0, k = left;
-  while (i < n1 && j < n2) {
-    if (LArr[i] <= RArr[j]) {
+  while (i < n1 && j < n2)
+  {
+    if (LArr[i] <= RArr[j])
+    {
       data[k++] = LArr[i++];
     }
-    else {
+    else
+    {
       data[k++] = RArr[j++];
     }
   }
-  while (i < n1) data[k++] = LArr[i++];
-  while (j < n2) data[k++] = RArr[j++];
+  while (i < n1)
+    data[k++] = LArr[i++];
+  while (j < n2)
+    data[k++] = RArr[j++];
 }
 
 template <typename T>
-void SortingSystem<T>::quickSort(int left, int right) {
-  if (left < right) {
+void SortingSystem<T>::quickSort(int left, int right)
+{
+  if (left < right)
+  {
     int pivotIndex = partition(left, right);
     quickSort(left, pivotIndex - 1);
     quickSort(pivotIndex + 1, right);
@@ -126,11 +169,14 @@ void SortingSystem<T>::quickSort(int left, int right) {
 }
 
 template <typename T>
-int SortingSystem<T>::partition(int low, int high) {
+int SortingSystem<T>::partition(int low, int high)
+{
   T pivot = data[high];
   int i = low - 1;
-  for (int j = low; j < high; j++) {
-    if (data[j] <= pivot) {
+  for (int j = low; j < high; j++)
+  {
+    if (data[j] <= pivot)
+    {
       swap(data[++i], data[j]);
     }
   }
@@ -138,26 +184,32 @@ int SortingSystem<T>::partition(int low, int high) {
   return i + 1;
 }
 
-
 template <typename T>
-void SortingSystem<T>::countSort() {
+void SortingSystem<T>::countSort()
+{
   T minElement = data[0], maxElement = data[0];
-  for (int i = 1; i < size; i++) {
-    if (data[i] < minElement) {
+  for (int i = 1; i < size; i++)
+  {
+    if (data[i] < minElement)
+    {
       minElement = data[i];
     }
-    if (data[i] > maxElement){
+    if (data[i] > maxElement)
+    {
       maxElement = data[i];
     }
   }
   int range = maxElement - minElement + 1;
   vector<int> count(range, 0);
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; i++)
+  {
     count[data[i] - minElement]++;
   }
   int index = 0;
-  for (int i = 0; i < range; i++) {
-    while (count[i]--) {
+  for (int i = 0; i < range; i++)
+  {
+    while (count[i]--)
+    {
       data[index++] = i + minElement;
     }
   }
@@ -166,25 +218,76 @@ void SortingSystem<T>::countSort() {
 }
 
 template <typename T>
-void SortingSystem<T>::radixSort() {
-
+T SortingSystem<T>::getMax()
+{
+  static_assert(std::is_arithmetic<T>::value, "getMax() only works with numbers");
+  T mx = data[0];
+  for (int i = 1; i < size; i++)
+    if (data[i] > mx)
+      mx = data[i];
+  return mx;
 }
 
 template <typename T>
-void SortingSystem<T>::bucketSort() {
+void SortingSystem<T>::countSort(int exp)
+{
+  T output[size];
+  int count[10] = {0};
 
-}
-
-template <typename T>
-void SortingSystem<T>::displayData() {
-  for (int i = 0; i < size; i++) {
-    cout << data[i] << " ";
+  for (int i = 0; i < size; i++)
+  {
+    count[(data[i] / exp) % 10]++;
   }
-  cout << endl;
+
+  for (int i = 1; i < 10; i++)
+  {
+    count[i] += count[i - 1];
+  }
+
+  for (int i = size - 1; i >= 0; i--)
+  {
+    output[count[(data[i] / exp) % 10] - 1] = data[i];
+    count[(data[i] / exp) % 10]--;
+  }
+
+  for (int i = 0; i < size; i++)
+  {
+    data[i] = output[i];
+  }
+
+  cout << "Radix Sort Step: ";
+  displayData();
 }
 
 template <typename T>
-void SortingSystem<T>::measureSortTime(void (SortingSystem::*sortFunc)()) {
+void SortingSystem<T>::radixSort()
+{
+  T m = getMax();
+  for (int exp = 1; m / exp > 0; exp *= 10)
+    countSort(exp);
+}
+
+template <typename T>
+void SortingSystem<T>::bucketSort()
+{
+}
+
+template <typename T>
+void SortingSystem<T>::displayData()
+{
+  cout << "[";
+  for (int i = 0; i < size; i++)
+  {
+    cout << data[i];
+    if (i < size - 1)
+      cout << ", ";
+  }
+  cout << "]\n";
+}
+
+template <typename T>
+void SortingSystem<T>::measureSortTime(void (SortingSystem::*sortFunc)())
+{
   auto start = chrono::high_resolution_clock::now();
   (this->*sortFunc)();
   auto end = chrono::high_resolution_clock::now();
@@ -193,6 +296,73 @@ void SortingSystem<T>::measureSortTime(void (SortingSystem::*sortFunc)()) {
 }
 
 template <typename T>
-void SortingSystem<T>::showMenu() {
+void SortingSystem<T>::showMenu()
+{
+  cout << "Select a sorting algorithm:\n"
+       << "1. Insertion Sort\n"
+       << "2. Selection Sort\n"
+       << "3. Bubble Sort\n"
+       << "4. Shell Sort\n"
+       << "5. Merge Sort\n"
+       << "6. Quick Sort\n"
+       << "7. Count Sort (Only for integers)\n"
+       << "8. Radix Sort (Only for integers)\n"
+       << "9. Bucket Sort\n"
+       << "Enter your choice (1-9):";
+}
 
+int main()
+{
+  char choice;
+  do
+  {
+    int size;
+    cout << "Enter the number of items to sort: ";
+    cin >> size;
+    SortingSystem<int> sortingSystem(size);
+    sortingSystem.showMenu();
+    int sortChoice;
+    cin >> sortChoice;
+
+    switch (sortChoice)
+    {
+    case 1:
+      sortingSystem.measureSortTime(&SortingSystem<int>::insertionSort);
+      break;
+    case 2:
+      sortingSystem.measureSortTime(&SortingSystem<int>::selectionSort);
+      break;
+    case 3:
+      sortingSystem.measureSortTime(&SortingSystem<int>::bubbleSort);
+      break;
+    case 4:
+      sortingSystem.measureSortTime(&SortingSystem<int>::shellSort);
+      break;
+    case 5:
+      // sortingSystem.measureSortTime(sortingSystem.mergeSort(0, size - 1));
+      break;
+    case 6:
+      // sortingSystem.measureSortTime(sortingSystem.quickSort(0, size - 1));
+      break;
+
+    case 7:
+      sortingSystem.measureSortTime(&SortingSystem<int>::countSort);
+      break;
+    case 8:
+      sortingSystem.measureSortTime(&SortingSystem<int>::radixSort);
+      break;
+    case 9:
+      sortingSystem.measureSortTime(&SortingSystem<int>::bucketSort);
+      break;
+    default:
+      cout << "Invalid choice. Please select a number between 1-6.\n";
+    }
+
+    cout << "Do you want to sort another dataset? (y/n): ";
+    cin >> choice;
+
+  } while (choice == 'y' || choice == 'Y');
+
+  cout << "Thank you for using the sorting system! Goodbye!\n";
+  return 0;
 }

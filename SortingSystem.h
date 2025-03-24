@@ -17,6 +17,7 @@ public:
     void mergeSort(int left, int right);
     void quickSort(int left, int right);
     void countSort();
+    void countSort(int exp);
     void radixSort();
     void bucketSort();
     void merge(int left, int mid, int right);
@@ -25,6 +26,8 @@ public:
     void displayData();
     void measureSortTime(void (SortingSystem::*sortFunc)());
     void showMenu();
+    T getMax();
+    
 };
 
 

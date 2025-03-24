@@ -10,7 +10,7 @@ class StatisticalCalculation {
       StatisticalCalculation();
       ~StatisticalCalculation();
       void sort();
-      T findMedian();
+      double findMedian();
       T findMin();
       T findMax();
       double findMean();

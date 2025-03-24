@@ -20,7 +20,7 @@ void StatisticalCalculation<T>::sort(){
 }
 
 template <class T>
-T StatisticalCalculation<T>::findMedian() {
+double StatisticalCalculation<T>::findMedian() {
   sort();
   if (size % 2 == 0){
     return (data[size / 2 - 1] + data[size / 2]) / 2;
