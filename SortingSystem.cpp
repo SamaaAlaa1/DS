@@ -268,9 +268,39 @@ void SortingSystem<T>::radixSort()
 }
 
 template <typename T>
-void SortingSystem<T>::bucketSort()
-{
+void SortingSystem<T>::bucketSort() {
+  T m = getMax();
+  const int bucketSize = 10;
+  T buckets[bucketSize][size];
+  int bucketCounts[bucketSize] = {0};
+
+  for (int i = 0; i < size; i++) {
+    int index = (data[i] * bucketSize) / (m + 1);
+    buckets[index][bucketCounts[index]++] = data[i];
+  }
+
+  for (int i = 0; i < bucketSize; i++) {
+    for (int j = 1; j < bucketCounts[i]; j++) {
+      T key = buckets[i][j];
+      int k = j - 1;
+      while (k >= 0 && buckets[i][k] > key) {
+        buckets[i][k + 1] = buckets[i][k];
+        k--;
+      }
+      buckets[i][k + 1] = key;
+    }
+  }
+
+  int index = 0;
+  for (int i = 0; i < bucketSize; i++) {
+    for (int j = 0; j < bucketCounts[i]; j++) {
+      data[index++] = buckets[i][j];
+    }
+  }
+  displayData();
 }
+
+
 
 template <typename T>
 void SortingSystem<T>::displayData()
