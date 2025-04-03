@@ -127,7 +127,9 @@ void SortingSystem<T>::merge(int left, int mid, int right)
 {
   int n1 = mid - left + 1;
   int n2 = right - mid;
-  vector<T> LArr(n1), RArr(n2);
+  T* LArr = new T[n1];
+  T* RArr = new T[n2];
+  
   for (int i = 0; i < n1; i++)
   {
     LArr[i] = data[left + i];
@@ -153,6 +155,9 @@ void SortingSystem<T>::merge(int left, int mid, int right)
     data[k++] = LArr[i++];
   while (j < n2)
     data[k++] = RArr[j++];
+
+  delete[] LArr;
+  delete[] RArr;
 }
 
 template <typename T>
@@ -185,9 +190,10 @@ int SortingSystem<T>::partition(int low, int high)
 }
 
 template <typename T>
-void SortingSystem<T>::countSort()
+void SortingSystem<T>::countSort() 
 {
   T minElement = data[0], maxElement = data[0];
+
   for (int i = 1; i < size; i++)
   {
     if (data[i] < minElement)
@@ -199,12 +205,16 @@ void SortingSystem<T>::countSort()
       maxElement = data[i];
     }
   }
+
   int range = maxElement - minElement + 1;
-  vector<int> count(range, 0);
+
+  int* count = new int[range](); 
+
   for (int i = 0; i < size; i++)
   {
     count[data[i] - minElement]++;
   }
+
   int index = 0;
   for (int i = 0; i < range; i++)
   {
@@ -213,9 +223,13 @@ void SortingSystem<T>::countSort()
       data[index++] = i + minElement;
     }
   }
+
+  delete[] count;
+
   cout << "Count Sort Step: ";
   displayData();
 }
+
 
 template <typename T>
 T SortingSystem<T>::getMax()
@@ -349,43 +363,123 @@ int main()
     int size;
     cout << "Enter the number of items to sort: ";
     cin >> size;
-    SortingSystem<int> sortingSystem(size);
-    sortingSystem.showMenu();
-    int sortChoice;
-    cin >> sortChoice;
 
-    switch (sortChoice)
+    cout << "Select the data type:\n"
+         << "1. Integer\n"
+         << "2. Float\n"
+         << "3. String\n"
+         << "Enter your choice (1-3): ";
+    int dataTypeChoice;
+    cin >> dataTypeChoice;
+
+    if (dataTypeChoice == 1)
     {
-    case 1:
-      sortingSystem.measureSortTime(&SortingSystem<int>::insertionSort);
-      break;
-    case 2:
-      sortingSystem.measureSortTime(&SortingSystem<int>::selectionSort);
-      break;
-    case 3:
-      sortingSystem.measureSortTime(&SortingSystem<int>::bubbleSort);
-      break;
-    case 4:
-      sortingSystem.measureSortTime(&SortingSystem<int>::shellSort);
-      break;
-    case 5:
-      // sortingSystem.measureSortTime(sortingSystem.mergeSort(0, size - 1));
-      break;
-    case 6:
-      // sortingSystem.measureSortTime(sortingSystem.quickSort(0, size - 1));
-      break;
+      SortingSystem<int> sortingSystem(size);
+      sortingSystem.showMenu();
+      int sortChoice;
+      cin >> sortChoice;
 
-    case 7:
-      sortingSystem.measureSortTime(&SortingSystem<int>::countSort);
-      break;
-    case 8:
-      sortingSystem.measureSortTime(&SortingSystem<int>::radixSort);
-      break;
-    case 9:
-      sortingSystem.measureSortTime(&SortingSystem<int>::bucketSort);
-      break;
-    default:
-      cout << "Invalid choice. Please select a number between 1-6.\n";
+      switch (sortChoice)
+      {
+      case 1:
+        sortingSystem.measureSortTime(&SortingSystem<int>::insertionSort);
+        break;
+      case 2:
+        sortingSystem.measureSortTime(&SortingSystem<int>::selectionSort);
+        break;
+      case 3:
+        sortingSystem.measureSortTime(&SortingSystem<int>::bubbleSort);
+        break;
+      case 4:
+        sortingSystem.measureSortTime(&SortingSystem<int>::shellSort);
+        break;
+      case 5:
+        sortingSystem.mergeSort(0, size - 1);
+        break;
+      case 6:
+        sortingSystem.quickSort(0, size - 1);
+        break;
+      case 7:
+        sortingSystem.measureSortTime(&SortingSystem<int>::countSort);
+        break;
+      case 8:
+        sortingSystem.measureSortTime(&SortingSystem<int>::radixSort);
+        break;
+      case 9:
+        sortingSystem.measureSortTime(&SortingSystem<int>::bucketSort);
+        break;
+      default:
+        cout << "Invalid choice. Please select a number between 1-9.\n";
+      }
+    }
+    else if (dataTypeChoice == 2)
+    {
+      SortingSystem<float> sortingSystem(size);
+      sortingSystem.showMenu();
+      int sortChoice;
+      cin >> sortChoice;
+
+      switch (sortChoice)
+      {
+      case 1:
+        sortingSystem.measureSortTime(&SortingSystem<float>::insertionSort);
+        break;
+      case 2:
+        sortingSystem.measureSortTime(&SortingSystem<float>::selectionSort);
+        break;
+      case 3:
+        sortingSystem.measureSortTime(&SortingSystem<float>::bubbleSort);
+        break;
+      case 4:
+        sortingSystem.measureSortTime(&SortingSystem<float>::shellSort);
+        break;
+      case 5:
+        sortingSystem.mergeSort(0, size - 1);
+        break;
+      case 6:
+        sortingSystem.quickSort(0, size - 1);
+        break;
+      case 9:
+        sortingSystem.measureSortTime(&SortingSystem<float>::bucketSort);
+        break;
+      default:
+        cout << "Invalid choice. Please select a number between 1-9.\n";
+      }
+    }
+    else if (dataTypeChoice == 3)
+    {
+      SortingSystem<string> sortingSystem(size);
+      sortingSystem.showMenu();
+      int sortChoice;
+      cin >> sortChoice;
+
+      switch (sortChoice)
+      {
+      case 1:
+        sortingSystem.measureSortTime(&SortingSystem<string>::insertionSort);
+        break;
+      case 2:
+        sortingSystem.measureSortTime(&SortingSystem<string>::selectionSort);
+        break;
+      case 3:
+        sortingSystem.measureSortTime(&SortingSystem<string>::bubbleSort);
+        break;
+      case 4:
+        sortingSystem.measureSortTime(&SortingSystem<string>::shellSort);
+        break;
+      case 5:
+        sortingSystem.mergeSort(0, size - 1);
+        break;
+      case 6:
+        sortingSystem.quickSort(0, size - 1);
+        break;
+      default:
+        cout << "Invalid choice. Please select a number between 1-9.\n";
+      }
+    }
+    else
+    {
+      cout << "Invalid data type choice. Please select a number between 1-3.\n";
     }
 
     cout << "Do you want to sort another dataset? (y/n): ";

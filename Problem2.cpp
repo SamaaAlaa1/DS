@@ -97,6 +97,30 @@ int main() {
     list.insert(7);
     list.insert(1);
     list.insert(9);
+
+    // Test cases
+    cout << "Initial list: " << list << endl;
+
+    // Test insertion
+    list.insert(4);
+    cout << "After inserting 4: " << list << endl;
+
+    list.insert(10);
+    cout << "After inserting 10: " << list << endl;
+
+    // Test removal
+    list.remove(0);
+    cout << "After removing index 0: " << list << endl;
+
+    list.remove(2);
+    cout << "After removing index 2: " << list << endl;
+
+    // Test out-of-bounds removal
+    list.remove(10);
+    cout << "After attempting to remove out-of-bounds index 10: " << list << endl;
+
+    // Test operator[]
+    cout << "Element at index 1: " << list[1] << endl;
     list.insert(1);
     cout << list << endl;
     list.remove(3);
