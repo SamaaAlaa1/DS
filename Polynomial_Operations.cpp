@@ -3,41 +3,42 @@
 #include <cmath>
 #include <string>
 using namespace std;
+
+template <typename T>
 class Poly {
 private:
     int order;
-    int* coefficients;
+    T* coefficients;
+
 public:
     Poly() : order(0), coefficients(nullptr) {}
 
-    Poly(int ord) : order(ord), coefficients(new int[order + 1]()) {}
+    Poly(int ord) : order(ord), coefficients(new T[order + 2]()) {}
 
     ~Poly() {
         delete[] coefficients;
     }
 
     int getOrder() const { return order; }
+
     void setOrder(int o) {
         order = o;
         delete[] coefficients;
-        coefficients = new int[order + 1]();
+        coefficients = new T[order + 2]();
     }
 
-    int* getCoefficients() const { return coefficients; }
+    T* getCoefficients() const { return coefficients; }
 
     void input_Polynomial(istream& input) {
-        for (int i = 0; i <= order+1 ; i++) {
+        for (int i = 0; i <= order + 1; i++) {
             input >> coefficients[i];
         }
     }
 
     void display_Polynomial() const {
         bool firstTerm = true;
-        int sum = 0;
 
-        for (int i = order+1; i > 0; i--) {
-            sum += coefficients[i];
-
+        for (int i = order + 1; i > 0; i--) {
             if (coefficients[i] != 0) {
                 if (!firstTerm) {
                     cout << (coefficients[i] > 0 ? " + " : " - ");
@@ -45,16 +46,17 @@ public:
                     cout << "-";
                 }
 
-                int absCoeff = abs(coefficients[i]);
-                if (i -1 == 1) {
-                    cout << absCoeff<< "X" ;
+                T absCoeff = abs(coefficients[i]);
+                if (i - 1 == 1) {
+                    cout << absCoeff << "X";
                 }
                 else if (i - 1 > 1) {
-                    cout <<  absCoeff<<"X^"<<(i-1);
+                    cout << absCoeff << "X^" << (i - 1);
                 }
                 else {
                     cout << absCoeff;
                 }
+
                 firstTerm = false;
             }
         }
@@ -65,31 +67,36 @@ public:
 
         cout << " = " << coefficients[0] << endl;
     }
-
 };
 
-void sumTwoPoly(const Poly& a, const Poly& b, Poly& result) {
+
+template <typename T>
+void sumTwoPoly(const Poly<T>& a, const Poly<T>& b, Poly<T>& result) {
     int maxOrder = max(a.getOrder(), b.getOrder());
     result.setOrder(maxOrder);
 
-    for (int i = 0; i <= maxOrder+1; i++) {
-        int aCoeff = (i <= a.getOrder()+1) ? a.getCoefficients()[i] : 0;
-        int bCoeff = (i <= b.getOrder()+1) ? b.getCoefficients()[i] : 0;
+    for (int i = 0; i <= maxOrder + 1; i++) {
+        T aCoeff = (i <= a.getOrder() + 1) ? a.getCoefficients()[i] : 0;
+        T bCoeff = (i <= b.getOrder() + 1) ? b.getCoefficients()[i] : 0;
         result.getCoefficients()[i] = aCoeff + bCoeff;
     }
 }
 
-void differenceTwoPoly(const Poly& a, const Poly& b, Poly& result) {
+
+template <typename T>
+void differenceTwoPoly(const Poly<T>& a, const Poly<T>& b, Poly<T>& result) {
     int maxOrder = max(a.getOrder(), b.getOrder());
     result.setOrder(maxOrder);
 
-    for (int i = 0; i <= maxOrder+1; i++) {
-        int aCoeff = (i <= a.getOrder()+1) ? a.getCoefficients()[i] : 0;
-        int bCoeff = (i <= b.getOrder()+1) ? b.getCoefficients()[i] : 0;
+    for (int i = 0; i <= maxOrder + 1; i++) {
+        T aCoeff = (i <= a.getOrder() + 1) ? a.getCoefficients()[i] : 0;
+        T bCoeff = (i <= b.getOrder() + 1) ? b.getCoefficients()[i] : 0;
         result.getCoefficients()[i] = bCoeff - aCoeff;
     }
 }
 
+
+template <typename T>
 bool processTestCase(istream& input, bool fromFile) {
     int first_order, second_order;
 
@@ -101,7 +108,7 @@ bool processTestCase(istream& input, bool fromFile) {
         input >> first_order;
     }
 
-    Poly p1(first_order);
+    Poly<T> p1(first_order);
 
     if (fromFile) {
         cout << "Reading first polynomial coefficients from file..." << endl;
@@ -119,7 +126,7 @@ bool processTestCase(istream& input, bool fromFile) {
         input >> second_order;
     }
 
-    Poly p2(second_order);
+    Poly<T> p2(second_order);
 
     if (fromFile) {
         cout << "Reading second polynomial coefficients from file..." << endl;
@@ -134,18 +141,19 @@ bool processTestCase(istream& input, bool fromFile) {
     cout << "Second polynomial: ";
     p2.display_Polynomial();
 
-    Poly sumResult;
+    Poly<T> sumResult;
     sumTwoPoly(p1, p2, sumResult);
     cout << "Sum of polynomials: ";
     sumResult.display_Polynomial();
 
-    Poly diffResult;
+    Poly<T> diffResult;
     differenceTwoPoly(p1, p2, diffResult);
     cout << "Difference of polynomials: ";
     diffResult.display_Polynomial();
 
     return true;
 }
+
 
 int main() {
     char choice;
@@ -167,7 +175,7 @@ int main() {
         int testCase = 1;
         while (true) {
             cout << "\n=== Test Case " << testCase << " ===" << endl;
-            if (!processTestCase(file, true)) break;
+            if (!processTestCase<double>(file, true)) break;
             testCase++;
 
             cout << "\nProcess another test case? (y/n): ";
@@ -181,7 +189,7 @@ int main() {
         int testCase = 1;
         do {
             cout << "\n=== Test Case " << testCase << " ===" << endl;
-            processTestCase(cin, false);
+            processTestCase<double>(cin, false);
             testCase++;
 
             cout << "\nEnter another test case? (y/n): ";
