@@ -243,43 +243,35 @@ T SortingSystem<T>::getMax()
 }
 
 template <typename T>
-void SortingSystem<T>::countSort(int exp)
-{
-  T output[size];
-  int count[10] = {0};
-
-  for (int i = 0; i < size; i++)
-  {
-    count[(data[i] / exp) % 10]++;
-  }
-
-  for (int i = 1; i < 10; i++)
-  {
-    count[i] += count[i - 1];
-  }
-
-  for (int i = size - 1; i >= 0; i--)
-  {
-    output[count[(data[i] / exp) % 10] - 1] = data[i];
-    count[(data[i] / exp) % 10]--;
-  }
-
-  for (int i = 0; i < size; i++)
-  {
-    data[i] = output[i];
-  }
-
-  cout << "Radix Sort Step: ";
-  displayData();
-}
-
-template <typename T>
 void SortingSystem<T>::radixSort()
 {
   T m = getMax();
   for (int exp = 1; m / exp > 0; exp *= 10)
-    countSort(exp);
+  {
+    T output[size];
+    int count[10] = {0};
+    for (int i = 0; i < size; i++)
+    {
+      count[(data[i] / exp) % 10]++;
+    }
+
+    for (int i = 1; i < 10; i++)
+    {
+      count[i] += count[i - 1];
+    }
+    for (int i = size - 1; i >= 0; i--)
+    {
+      output[count[(data[i] / exp) % 10] - 1] = data[i];
+      count[(data[i] / exp) % 10]--;
+    }
+    for (int i = 0; i < size; i++)
+    {
+      data[i] = output[i];
+    }
+    displayData();
+  }
 }
+
 
 template <typename T>
 void SortingSystem<T>::bucketSort() {
@@ -470,9 +462,10 @@ int main()
       case 5:
         sortingSystem.mergeSort(0, size - 1);
         break;
-      case 6:
+            case 6:
         sortingSystem.quickSort(0, size - 1);
         break;
+      
       default:
         cout << "Invalid choice. Please select a number between 1-9.\n";
       }
