@@ -1,0 +1,1 @@
+loadFromFile(const string& filename, int& size)

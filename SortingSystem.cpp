@@ -5,20 +5,27 @@ SortingSystem<T>::SortingSystem(int n)
 {
   size = n;
   data = new T[size];
+}
 
-  cin.ignore();
-
+template <typename T>
+void SortingSystem<T>::inputData()
+{
   for (int i = 0; i < size; i++)
   {
     cout << "Enter data " << i + 1 << ": ";
-
     if constexpr (std::is_same<T, std::string>::value)
     {
+      cin.ignore(); 
       getline(cin, data[i]);
     }
     else
     {
-      cin >> data[i];
+      while (!(cin >> data[i]))
+      {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please try again: ";
+      }
     }
   }
 }
@@ -127,9 +134,9 @@ void SortingSystem<T>::merge(int left, int mid, int right)
 {
   int n1 = mid - left + 1;
   int n2 = right - mid;
-  T* LArr = new T[n1];
-  T* RArr = new T[n2];
-  
+  T *LArr = new T[n1];
+  T *RArr = new T[n2];
+
   for (int i = 0; i < n1; i++)
   {
     LArr[i] = data[left + i];
@@ -190,7 +197,7 @@ int SortingSystem<T>::partition(int low, int high)
 }
 
 template <typename T>
-void SortingSystem<T>::countSort() 
+void SortingSystem<T>::countSort()
 {
   T minElement = data[0], maxElement = data[0];
 
@@ -208,7 +215,7 @@ void SortingSystem<T>::countSort()
 
   int range = maxElement - minElement + 1;
 
-  int* count = new int[range](); 
+  int *count = new int[range]();
 
   for (int i = 0; i < size; i++)
   {
@@ -229,7 +236,6 @@ void SortingSystem<T>::countSort()
   cout << "Count Sort Step: ";
   displayData();
 }
-
 
 template <typename T>
 T SortingSystem<T>::getMax()
@@ -272,24 +278,28 @@ void SortingSystem<T>::radixSort()
   }
 }
 
-
 template <typename T>
-void SortingSystem<T>::bucketSort() {
+void SortingSystem<T>::bucketSort()
+{
   T m = getMax();
   const int bucketSize = 10;
   T buckets[bucketSize][size];
   int bucketCounts[bucketSize] = {0};
 
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; i++)
+  {
     int index = (data[i] * bucketSize) / (m + 1);
     buckets[index][bucketCounts[index]++] = data[i];
   }
 
-  for (int i = 0; i < bucketSize; i++) {
-    for (int j = 1; j < bucketCounts[i]; j++) {
+  for (int i = 0; i < bucketSize; i++)
+  {
+    for (int j = 1; j < bucketCounts[i]; j++)
+    {
       T key = buckets[i][j];
       int k = j - 1;
-      while (k >= 0 && buckets[i][k] > key) {
+      while (k >= 0 && buckets[i][k] > key)
+      {
         buckets[i][k + 1] = buckets[i][k];
         k--;
       }
@@ -298,15 +308,15 @@ void SortingSystem<T>::bucketSort() {
   }
 
   int index = 0;
-  for (int i = 0; i < bucketSize; i++) {
-    for (int j = 0; j < bucketCounts[i]; j++) {
+  for (int i = 0; i < bucketSize; i++)
+  {
+    for (int j = 0; j < bucketCounts[i]; j++)
+    {
       data[index++] = buckets[i][j];
     }
   }
   displayData();
 }
-
-
 
 template <typename T>
 void SortingSystem<T>::displayData()
@@ -347,138 +357,254 @@ void SortingSystem<T>::showMenu()
        << "Enter your choice (1-9):";
 }
 
-int main()
+template <typename T>
+void SortingSystem<T>::setDataAt(int index, T value)
 {
-  char choice;
-  do
+  if (index >= 0 && index < size)
   {
-    int size;
-    cout << "Enter the number of items to sort: ";
-    cin >> size;
+    data[index] = value;
+  }
+}
 
-    cout << "Select the data type:\n"
-         << "1. Integer\n"
-         << "2. Float\n"
-         << "3. String\n"
-         << "Enter your choice (1-3): ";
-    int dataTypeChoice;
-    cin >> dataTypeChoice;
+template <typename T>
+void SortingSystem<T>::loadFromFile(string filename, int &loadedSize)
+{
+  ifstream file(filename);
+  if (!file)
+  {
+    cerr << "Error: Could not open file: " << filename << endl;
+    loadedSize = 0;
+    return;
+  }
+  int capacity = 10;
+  T *tempData = new T[capacity];
+  loadedSize = 0;
 
-    if (dataTypeChoice == 1)
+  T value;
+  while (file >> value)
+  {
+    if (loadedSize >= capacity)
     {
-      SortingSystem<int> sortingSystem(size);
-      sortingSystem.showMenu();
-      int sortChoice;
-      cin >> sortChoice;
-
-      switch (sortChoice)
+      capacity *= 2;
+      T *newData = new T[capacity];
+      for (int i = 0; i < loadedSize; i++)
       {
-      case 1:
-        sortingSystem.measureSortTime(&SortingSystem<int>::insertionSort);
-        break;
-      case 2:
-        sortingSystem.measureSortTime(&SortingSystem<int>::selectionSort);
-        break;
-      case 3:
-        sortingSystem.measureSortTime(&SortingSystem<int>::bubbleSort);
-        break;
-      case 4:
-        sortingSystem.measureSortTime(&SortingSystem<int>::shellSort);
-        break;
-      case 5:
-        sortingSystem.mergeSort(0, size - 1);
-        break;
-      case 6:
-        sortingSystem.quickSort(0, size - 1);
-        break;
-      case 7:
-        sortingSystem.measureSortTime(&SortingSystem<int>::countSort);
-        break;
-      case 8:
-        sortingSystem.measureSortTime(&SortingSystem<int>::radixSort);
-        break;
-      case 9:
-        sortingSystem.measureSortTime(&SortingSystem<int>::bucketSort);
-        break;
-      default:
-        cout << "Invalid choice. Please select a number between 1-9.\n";
+        newData[i] = tempData[i];
       }
+      delete[] tempData;
+      tempData = newData;
     }
-    else if (dataTypeChoice == 2)
-    {
-      SortingSystem<float> sortingSystem(size);
-      sortingSystem.showMenu();
-      int sortChoice;
-      cin >> sortChoice;
+    tempData[loadedSize++] = value;
+  }
 
-      switch (sortChoice)
-      {
-      case 1:
-        sortingSystem.measureSortTime(&SortingSystem<float>::insertionSort);
-        break;
-      case 2:
-        sortingSystem.measureSortTime(&SortingSystem<float>::selectionSort);
-        break;
-      case 3:
-        sortingSystem.measureSortTime(&SortingSystem<float>::bubbleSort);
-        break;
-      case 4:
-        sortingSystem.measureSortTime(&SortingSystem<float>::shellSort);
-        break;
-      case 5:
-        sortingSystem.mergeSort(0, size - 1);
-        break;
-      case 6:
-        sortingSystem.quickSort(0, size - 1);
-        break;
-      case 9:
-        sortingSystem.measureSortTime(&SortingSystem<float>::bucketSort);
-        break;
-      default:
-        cout << "Invalid choice. Please select a number between 1-9.\n";
+  if (loadedSize == 0)
+  {
+    delete[] tempData;
+    cerr << "Error: File is empty or contains invalid data.\n";
+    return;
+  }
+  if (data)
+  {
+    delete[] data;
+  }
+  data = tempData;
+  size = loadedSize;
+}
+
+int main() {
+  char choice;
+  do {
+      int inputMethod;
+      cout << "Choose input method:\n"
+           << "1. Manual Input\n"
+           << "2. Load from File\n"
+           << "Enter your choice (1-2): ";
+      while (!(cin >> inputMethod) || (inputMethod != 1 && inputMethod != 2)) {
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(), '\n');
+          cout << "Invalid choice. Please enter 1 or 2: ";
       }
-    }
-    else if (dataTypeChoice == 3)
-    {
-      SortingSystem<string> sortingSystem(size);
-      sortingSystem.showMenu();
-      int sortChoice;
-      cin >> sortChoice;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-      switch (sortChoice)
-      {
-      case 1:
-        sortingSystem.measureSortTime(&SortingSystem<string>::insertionSort);
-        break;
-      case 2:
-        sortingSystem.measureSortTime(&SortingSystem<string>::selectionSort);
-        break;
-      case 3:
-        sortingSystem.measureSortTime(&SortingSystem<string>::bubbleSort);
-        break;
-      case 4:
-        sortingSystem.measureSortTime(&SortingSystem<string>::shellSort);
-        break;
-      case 5:
-        sortingSystem.mergeSort(0, size - 1);
-        break;
-            case 6:
-        sortingSystem.quickSort(0, size - 1);
-        break;
-      
-      default:
-        cout << "Invalid choice. Please select a number between 1-9.\n";
+      int dataTypeChoice;
+      cout << "Select the data type:\n"
+           << "1. Integer\n"
+           << "2. Float\n"
+           << "3. String\n"
+           << "Enter your choice (1-3): ";
+      while (!(cin >> dataTypeChoice) || dataTypeChoice < 1 || dataTypeChoice > 3) {
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(), '\n');
+          cout << "Invalid choice. Please enter 1, 2, or 3: ";
       }
-    }
-    else
-    {
-      cout << "Invalid data type choice. Please select a number between 1-3.\n";
-    }
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      switch (dataTypeChoice) {
+          case 1: { 
+              int size = 0;
+              string filename;
+              SortingSystem<int>* intSystem = nullptr;
 
-    cout << "Do you want to sort another dataset? (y/n): ";
-    cin >> choice;
+              if (inputMethod == 1) {
+                  cout << "Enter the number of items to sort: ";
+                  while (!(cin >> size) || size <= 0) {
+                      cin.clear();
+                      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                      cout << "Invalid size. Please enter a positive integer: ";
+                  }
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  
+                  intSystem = new SortingSystem<int>(size);
+                  intSystem->inputData();
+              } 
+              else {
+                  cout << "Enter filename: ";
+                  getline(cin, filename);
+                  
+                  intSystem = new SortingSystem<int>(0);
+                  intSystem->loadFromFile(filename, size);
+                  if (size == 0) {
+                      delete intSystem;
+                      continue;
+                  }
+              }
 
-  } while (choice == 'y' || choice == 'Y');
+              intSystem->showMenu();
+              int sortChoice;
+              while (!(cin >> sortChoice) || sortChoice < 1 || sortChoice > 9) {
+                  cin.clear();
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  cout << "Invalid choice. Please enter a number between 1-9: ";
+              }
+              cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+              switch (sortChoice) {
+                  case 1: intSystem->measureSortTime(&SortingSystem<int>::insertionSort); break;
+                  case 2: intSystem->measureSortTime(&SortingSystem<int>::selectionSort); break;
+                  case 3: intSystem->measureSortTime(&SortingSystem<int>::bubbleSort); break;
+                  case 4: intSystem->measureSortTime(&SortingSystem<int>::shellSort); break;
+                  case 5: intSystem->mergeSort(0, size - 1); break;
+                  case 6: intSystem->quickSort(0, size - 1); break;
+                  case 7: intSystem->measureSortTime(&SortingSystem<int>::countSort); break;
+                  case 8: intSystem->measureSortTime(&SortingSystem<int>::radixSort); break;
+                  case 9: intSystem->measureSortTime(&SortingSystem<int>::bucketSort); break;
+              }
+
+              delete intSystem;
+              break;
+          }
+          case 2: { 
+              int size = 0;
+              string filename;
+              SortingSystem<float>* floatSystem = nullptr;
+
+              if (inputMethod == 1) {
+                  cout << "Enter the number of items to sort: ";
+                  while (!(cin >> size) || size <= 0) {
+                      cin.clear();
+                      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                      cout << "Invalid size. Please enter a positive integer: ";
+                  }
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  
+                  floatSystem = new SortingSystem<float>(size);
+                  floatSystem->inputData();
+              } 
+              else {
+                  cout << "Enter filename: ";
+                  getline(cin, filename);
+                  
+                  floatSystem = new SortingSystem<float>(0);
+                  floatSystem->loadFromFile(filename, size);
+                  if (size == 0) {
+                      delete floatSystem;
+                      continue;
+                  }
+              }
+
+              floatSystem->showMenu();
+              int sortChoice;
+              while (!(cin >> sortChoice) || 
+                    (sortChoice < 1 || sortChoice > 6) && sortChoice != 9) {
+                  cin.clear();
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  cout << "Invalid choice. Please enter a number between 1-6 or 9: ";
+              }
+              cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+              switch (sortChoice) {
+                  case 1: floatSystem->measureSortTime(&SortingSystem<float>::insertionSort); break;
+                  case 2: floatSystem->measureSortTime(&SortingSystem<float>::selectionSort); break;
+                  case 3: floatSystem->measureSortTime(&SortingSystem<float>::bubbleSort); break;
+                  case 4: floatSystem->measureSortTime(&SortingSystem<float>::shellSort); break;
+                  case 5: floatSystem->mergeSort(0, size - 1); break;
+                  case 6: floatSystem->quickSort(0, size - 1); break;
+                  case 9: floatSystem->measureSortTime(&SortingSystem<float>::bucketSort); break;
+              }
+
+              delete floatSystem;
+              break;
+          }
+          case 3: { 
+              int size = 0;
+              string filename;
+              SortingSystem<string>* stringSystem = nullptr;
+
+              if (inputMethod == 1) {
+                  cout << "Enter the number of items to sort: ";
+                  while (!(cin >> size) || size <= 0) {
+                      cin.clear();
+                      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                      cout << "Invalid size. Please enter a positive integer: ";
+                  }
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  
+                  stringSystem = new SortingSystem<string>(size);
+                  stringSystem->inputData();
+              } 
+              else {
+                  cout << "Enter filename: ";
+                  getline(cin, filename);
+                  
+                  stringSystem = new SortingSystem<string>(0);
+                  stringSystem->loadFromFile(filename, size);
+                  if (size == 0) {
+                      delete stringSystem;
+                      continue;
+                  }
+              }
+
+              stringSystem->showMenu();
+              int sortChoice;
+              while (!(cin >> sortChoice) || sortChoice < 1 || sortChoice > 6) {
+                  cin.clear();
+                  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                  cout << "Invalid choice. Please enter a number between 1-6: ";
+              }
+              cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+              switch (sortChoice) {
+                  case 1: stringSystem->measureSortTime(&SortingSystem<string>::insertionSort); break;
+                  case 2: stringSystem->measureSortTime(&SortingSystem<string>::selectionSort); break;
+                  case 3: stringSystem->measureSortTime(&SortingSystem<string>::bubbleSort); break;
+                  case 4: stringSystem->measureSortTime(&SortingSystem<string>::shellSort); break;
+                  case 5: stringSystem->mergeSort(0, size - 1); break;
+                  case 6: stringSystem->quickSort(0, size - 1); break;
+              }
+
+              delete stringSystem;
+              break;
+          }
+      }
+
+      cout << "Do you want to sort another dataset? (y/n): ";
+      while (!(cin >> choice) || (tolower(choice) != 'y' && tolower(choice) != 'n')) {
+          cin.clear();
+          cin.ignore(numeric_limits<streamsize>::max(), '\n');
+          cout << "Invalid choice. Please enter y or n: ";
+      }
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+  } while (tolower(choice) == 'y');
 
   cout << "Thank you for using the sorting system! Goodbye!\n";
   return 0;

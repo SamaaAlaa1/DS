@@ -4,9 +4,11 @@
 using namespace std;
 
 template <typename T>
-class SortingSystem {
-    T* data;
+class SortingSystem
+{
+    T *data;
     int size;
+
 public:
     SortingSystem(int n);
     ~SortingSystem();
@@ -27,8 +29,10 @@ public:
     void measureSortTime(void (SortingSystem::*sortFunc)());
     void showMenu();
     T getMax();
-    
+    void setDataAt(int index, T value);
+    void inputData();
+    void loadFromFile(string filename, int& size);
+
 };
 
-
-#endif //SORTINGSYSTEM_H
+#endif // SORTINGSYSTEM_H
